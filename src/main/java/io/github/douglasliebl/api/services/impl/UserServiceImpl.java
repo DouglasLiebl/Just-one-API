@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
     private void emailVerify(UserDTO request) {
         Optional<User> user = repository.findByEmail(request.getEmail());
 
-        if(user.isPresent() && !user.get().getEmail().equals(request.getEmail()))
+        if(user.isPresent() && !user.get().getId().equals(request.getId()))
             throw new DataIntegrityViolationException("Email already used");
     }
 }

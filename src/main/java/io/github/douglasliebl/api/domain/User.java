@@ -3,7 +3,7 @@ package io.github.douglasliebl.api.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
+@Data @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
