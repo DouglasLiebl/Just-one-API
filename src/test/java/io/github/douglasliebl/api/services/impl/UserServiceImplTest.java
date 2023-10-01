@@ -20,8 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -208,5 +207,41 @@ class UserServiceImplTest {
         // then
         assertEquals(DataIntegrityViolationException.class, exception.getClass());
         assertEquals("Email already used", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should delete a user")
+    public void whenDeleteWithSuccess() {
+        // given
+        User user = User.builder()
+                .id(1L)
+                .name("User")
+                .email("user@gmail.com")
+                .password("password").build();
+
+        // when
+        Mockito.when(repository.findById(Mockito.anyLong()))
+                .thenReturn(Optional.of(user));
+
+        assertDoesNotThrow(() -> service.delete(1L));
+
+        // then
+        Mockito.verify(repository, Mockito.times(1)).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("Should throw a exception when deleting not registered user")
+    public void whenDeleteThenReturnAnObjectNotFoundException() {
+        // given
+        Long id = 1L;
+
+        // when
+        Throwable exception = Assertions
+                .catchThrowable(() -> service.delete(id));
+
+        // then
+        Mockito.verify(repository, Mockito.never()).deleteById(id);
+        assertEquals(ObjectNotFoundException.class, exception.getClass());
+        assertEquals("Object not found", exception.getMessage());
     }
 }
